@@ -100,7 +100,15 @@ int spiffs_get_mqtt_port()
 /*
  * Be sure to free-up the memory of the param when not needed anymore
  */
-char* spiffs_get_mqtt_name()
+char* spiffs_get_board_name()
 {
   return spiffs_get_spiffs_param("/mqtt_name.txt");
+}
+
+/*
+ * Be sure to free-up the memory of the param when not needed anymore
+ */
+char* spiffs_get_ota_pwd()
+{
+  return spiffs_get_spiffs_param("/ota_pwd.txt");
 }

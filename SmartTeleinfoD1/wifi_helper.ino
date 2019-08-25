@@ -2,7 +2,7 @@ char* gSsid = NULL;
 char* gPwd = NULL;
 char str_mac[18] = {0};
 
-void wifi_setup(bool list_network, char* ssid, char* pwd)
+void wifi_setup(bool list_network, char* ssid, char* pwd, char* name)
 {
   Serial.println(F("Initializing Wifi..."));
   printMacAddress();
@@ -31,7 +31,7 @@ void wifi_setup(bool list_network, char* ssid, char* pwd)
   wifi_set_phy_mode(PHY_MODE_11G);
   system_phy_set_max_tpw(10);
   WiFi.mode(WIFI_STA);
-  WiFi.hostname("Teleinfo");
+  WiFi.hostname(name);
   WiFi.begin(gSsid, gPwd);
 
   while (WiFi.waitForConnectResult() != WL_CONNECTED)
@@ -43,6 +43,9 @@ void wifi_setup(bool list_network, char* ssid, char* pwd)
 
   Serial.println(F("WiFi Connected !"));
   printWiFiStatusInfo();
+
+  // Release name memory
+  free(name);
 }
 
 void wifi_check()
