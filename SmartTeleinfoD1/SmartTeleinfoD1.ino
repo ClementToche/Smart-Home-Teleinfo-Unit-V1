@@ -1,63 +1,61 @@
+#include <WiFiClientSecure.h>
+#include <HardwareSerial.h>
 #include <SoftwareSerial.h>
+#include <PubSubClient.h>
 #include <LibTeleinfo.h>
+#include <ESP8266WiFi.h>
+#include <FS.h>
 
-SoftwareSerial SerialTInfo(3,4); // Teleinfo Serial
-TInfo          tinfo; // Teleinfo object
-
-void printUptime(void)
-{
-  Serial.print(millis()/1000);
-  Serial.print(F("s\t"));
-}
-
-void DataCallback(ValueList * me, uint8_t  flags)
-{
-  // Show our not accurate second counter
-  //printUptime();
-
-  if (flags & TINFO_FLAGS_ADDED) 
-    Serial.print(F("NEW -> "));
-
-  if (flags & TINFO_FLAGS_UPDATED)
-    Serial.print(F("MAJ -> "));
-
-  // Display values
-  Serial.print(me->name);
-  Serial.print("=");
-  Serial.println(me->value);
-}
+#include "const.h"
 
 void setup()
 {
-  // Serial, pour le debug
-  Serial.begin(115200);
+  pin_setup();
 
-  Serial.println(F("========================================"));
+  Serial.begin(115200);
+  while (!Serial);
+
+  //  _________                      .__  __  .__       .__
+  //  \_   ___ \  ____   ____   ____ |__|/  |_|__| ____ |__|____    ____
+  //  /    \  \/ /  _ \ / ___\ /    \|  \   __\  |/ ___\|  \__  \  /    \ 
+  //  \     \___(  <_> ) /_/  >   |  \  ||  | |  \  \___|  |/ __ \|   |  \
+  //   \______  /\____/\___  /|___|  /__||__| |__|\___  >__(____  /___|  /
+  //          \/      /_____/      \/                 \/        \/     \/
+
+  Serial.println(F("********************************************************************"));
+  Serial.println(F("_________                      .__  __  .__       .__               "));
+  Serial.println(F("\\_   ___ \\  ____   ____   ____ |__|/  |_|__| ____ |__|____    ____  "));
+  Serial.println(F("/    \\  \\/ /  _ \\ / ___\\ /    \\|  \\   __\\  |/ ___\\|  \\__  \\  /    \\ "));
+  Serial.println(F("\\     \\___(  <_> ) /_/  >   |  \\  ||  | |  \\  \\___|  |/ __ \\|   |  \\"));
+  Serial.println(F(" \\______  /\\____/\\___  /|___|  /__||__| |__|\\___  >__(____  /___|  /"));
+  Serial.println(F("        \\/      /_____/      \\/                 \\/        \\/     \\/ "));
+  Serial.println(F("********************************************************************"));
   Serial.println(F(__FILE__));
   Serial.println(F(__DATE__ " " __TIME__));
-  Serial.println();
+  Serial.print(F("Version "));
+  Serial.println(version);
+  Serial.println(F("********************************************************************"));
 
-  // Configure Teleinfo Soft serial 
-  // La téléinfo est connectee sur D3
-  // ceci permet d'eviter les conflits avec la 
-  // vraie serial lors des uploads
-  SerialTInfo.begin(1200);
+  spiffs_setup();
 
-  // Init teleinfo
-  tinfo.init();
+  spiffs_list_files();
 
-  // Attacher les callback dont nous avons besoin
-  // pour cette demo, ici attach data
-  tinfo.attachData(DataCallback);
+  wifi_setup(false, spiffs_get_wifi_ssid(), spiffs_get_wifi_pwd());
 
-  printUptime();
-  Serial.println(F("Teleinfo started"));
+  mqtt_setup(spiffs_get_mqtt_user(),
+             spiffs_get_mqtt_pwd(),
+             spiffs_get_mqtt_server(),
+             spiffs_get_mqtt_port(),
+             spiffs_get_mqtt_name());
+
+  teleinfo_setup();
+
+  Serial.println(F("********** Started **********"));
+  
+  pin_led(false);
 }
 
 void loop()
 {
-  // Teleinformation processing
-  if ( SerialTInfo.available() ) {
-    tinfo.process(SerialTInfo.read());
-  }
+  teleinfo_print_process();
 }
