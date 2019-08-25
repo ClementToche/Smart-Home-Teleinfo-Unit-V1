@@ -67,6 +67,6 @@ void setup()
 void loop()
 {
   teleinfo_print_process();
-  mqtt_client.loop();
+  mqtt_loop();
   ArduinoOTA.handle();
 }

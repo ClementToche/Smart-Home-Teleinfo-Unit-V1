@@ -105,3 +105,8 @@ void mqtt_send_tinfo_status(tinfoType type, int value)
         break;
     }
 }
+
+void mqtt_loop()
+{
+    mqtt_client.loop();
+}
