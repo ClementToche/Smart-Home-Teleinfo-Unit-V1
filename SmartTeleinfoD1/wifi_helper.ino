@@ -31,6 +31,7 @@ void wifi_setup(bool list_network, char* ssid, char* pwd)
   wifi_set_phy_mode(PHY_MODE_11G);
   system_phy_set_max_tpw(10);
   WiFi.mode(WIFI_STA);
+  WiFi.hostname("Teleinfo");
   WiFi.begin(gSsid, gPwd);
 
   while (WiFi.waitForConnectResult() != WL_CONNECTED)
