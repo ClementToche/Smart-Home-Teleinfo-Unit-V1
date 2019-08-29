@@ -1,4 +1,4 @@
-const char version[] = "1.1.0";
+const char version[] = "1.1.1";
 
 const int rxPin = 3;
 const int txPin = 4; // This pin is not used

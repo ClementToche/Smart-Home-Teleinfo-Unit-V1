@@ -66,7 +66,11 @@ void setup()
 
 void loop()
 {
+  wifi_check();
+
   teleinfo_print_process();
+
   mqtt_loop();
+  
   ArduinoOTA.handle();
 }

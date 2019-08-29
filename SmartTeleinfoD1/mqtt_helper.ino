@@ -106,7 +106,20 @@ void mqtt_send_tinfo_status(tinfoType type, int value)
     }
 }
 
+void mqtt_send_detect_status()
+{
+    sprintf(topic, "/audoche/home/smartmodule/%s/detector/pir", gMqtt_name);
+    mqtt_client.publish(topic, "movement");
+}
+
 void mqtt_loop()
 {
     mqtt_client.loop();
+
+    if (!mqtt_client.connected())
+    {
+        pin_led(true);
+        mqtt_connect();
+        pin_led(false);
+    }
 }
