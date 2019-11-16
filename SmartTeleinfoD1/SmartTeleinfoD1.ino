@@ -73,4 +73,10 @@ void loop()
   mqtt_loop();
   
   ArduinoOTA.handle();
+
+  // Reboot every 24h
+  if (millis() > 86400000)
+  {
+    ESP.restart();
+  }
 }
